@@ -138,7 +138,7 @@ logmodel = LogisticRegression()
 logmodel.fit(X_train,y_train)
 predictions = logmodel.predict(X_test)
 
-
+#evaluation
 from sklearn.metrics import confusion_matrix
 confusion_matrix(y_test,predictions)
 from sklearn.metrics import accuracy_score
