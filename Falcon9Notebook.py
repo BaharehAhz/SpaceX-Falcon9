@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import datetime
+import sklearn
 
 
 df=pd.read_csv('dataset_falcon9.csv')
@@ -131,23 +132,91 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20,random_state=101)
 print(y_test)
 
-import sklearn
-print(sklearn.__version__)
+
 from sklearn.linear_model import LogisticRegression
 logmodel = LogisticRegression()
 logmodel.fit(X_train,y_train)
 predictions = logmodel.predict(X_test)
-
-#evaluation
 from sklearn.metrics import confusion_matrix
 confusion_matrix(y_test,predictions)
 from sklearn.metrics import accuracy_score
 accuracy_score(y_test,predictions, normalize=False)
 accuracy_score(y_test,predictions, normalize=True)
 from sklearn.metrics import classification_report
+print('LogisticRegression model evaluation:') 
 print(classification_report(y_test,predictions))
 
 
-                                                     
-                                                    
-                                                    
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV
+knn = KNeighborsClassifier()
+parameters = {'n_neighbors': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14]}
+knn_cv = GridSearchCV(knn, parameters)
+knn_cv.fit(X_train, y_train)
+print("tuned hpyerparameters :(best parameters) ",knn_cv.best_params_)
+predictions = knn_cv.predict(X_test)
+confusion_matrix(y_test,predictions)
+print('Accuracy score (non-normalized):',accuracy_score(y_test,predictions, normalize=False))
+print('Accuracy score (normalized):', accuracy_score(y_test,predictions, normalize=True))
+print('KNeighborsClassifier model evaluation:') 
+print(classification_report(y_test,predictions))
+
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+tree = DecisionTreeClassifier()
+parameters = {'min_samples_leaf': [1,2,3,4,5,6],
+     'min_samples_split': [1,2,3,4,5,6]}
+tree_cv = GridSearchCV(tree, parameters)
+tree_cv.fit(X_train, y_train)
+print('tuned hpyerparameters :(best parameters)', tree_cv.best_params_)
+tree_1 = DecisionTreeClassifier(min_samples_leaf= 1, min_samples_split= 5)
+tree_1.fit(X_train,y_train)
+predictions = tree_1.predict(X_test)
+confusion_matrix(y_test,predictions)
+print('Accuracy score (non-normalized):',accuracy_score(y_test,predictions, normalize=False))
+print('Accuracy score (normalized):',accuracy_score(y_test,predictions, normalize=True))
+print('DecisionTreeClassifier model evaluation:') 
+print(classification_report(y_test,predictions))                                                
+
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+rfc = RandomForestClassifier()
+parameters = {'min_samples_leaf': [1, 2, 4],
+     'min_samples_split': [2, 5, 10],  'n_estimators': [10,20,30] }
+rfc_cv = GridSearchCV(rfc, parameters)
+rfc_cv.fit(X_train, y_train)
+print("tuned hpyerparameters :(best parameters) ",rfc_cv.best_params_)
+rfc_1 = RandomForestClassifier( n_estimators= 10, min_samples_leaf= 1, min_samples_split= 2)
+rfc_1.fit(X_train,y_train)
+predictions = rfc_1.predict(X_test)
+print('RandomForestClassifier model evaluation:') 
+print(confusion_matrix(y_test,predictions))
+print('Accuracy score (non-normalized):',accuracy_score(y_test,predictions, normalize=False))  
+print('Accuracy score (normalized):', accuracy_score(y_test, predictions, normalize=True))
+
+
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+svm_1 = SVC()
+parameters = {'C': [0.5, 1, 1.5], 'kernel':['linear', 'rbf','sigmoid']}
+svm_cv = GridSearchCV(svm_1, parameters)
+svm_cv.fit(X_train, y_train)
+predictions = svm_cv.predict(X_test)
+print("tuned hyperparameters :(best parameters) ",svm_cv.best_params_)
+print('SVM model evaluation:') 
+print(confusion_matrix(y_test,predictions))
+print('Accuracy score (non-normalized):',accuracy_score(y_test,predictions, normalize=False))  
+print('Accuracy score (normalized):', accuracy_score(y_test, predictions, normalize=True))
+
